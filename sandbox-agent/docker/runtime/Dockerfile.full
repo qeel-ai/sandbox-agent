@@ -151,7 +151,20 @@ RUN useradd -m -s /bin/bash sandbox
 USER sandbox
 WORKDIR /home/sandbox
 
+# Qeel: pin omp (it releases several times a day), then install the rest.
+ARG OMP_VERSION=18.18.5
+RUN sandbox-agent install-agent omp --agent-version "${OMP_VERSION}"
 RUN sandbox-agent install-agent --all
+# Qeel: agents run unattended in a sandbox, with Qeel's MCP tools offered as
+# direct tools and skills mounted at the Pi skills folder.
+RUN mkdir -p .omp/agent && printf '%s\n' \
+    'tools:' \
+    '  approvalMode: yolo' \
+    '  xdev: false' \
+    'skills:' \
+    '  customDirectories:' \
+    '    - /home/sandbox/.pi/agent/skills' \
+    > .omp/agent/config.yml
 
 EXPOSE 2468
 
