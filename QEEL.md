@@ -30,3 +30,17 @@ version) and push the tag. The `qeel-image` workflow builds linux/amd64 and
 linux/arm64 and publishes `ghcr.io/qeel-ai/sandbox-agent:X.Y.Z-qeel.N`.
 To change only the omp version, bump `OMP_VERSION` in
 `sandbox-agent/docker/runtime/Dockerfile.full` and tag the next N.
+
+## Publishing binaries
+
+The `qeel-binaries` workflow runs on the same `vX.Y.Z-qeel.N` tags as the
+image. It builds `sandbox-agent` with upstream's `docker/release/build.sh`
+(macOS targets are cross-compiled on Linux with osxcross) and uploads raw
+executables, no archive, to the GitHub Release named after the tag:
+`sandbox-agent-aarch64-apple-darwin`, `sandbox-agent-x86_64-apple-darwin`,
+`sandbox-agent-x86_64-unknown-linux-musl` and
+`sandbox-agent-aarch64-unknown-linux-musl`. To (re)build an existing tag:
+
+```sh
+gh workflow run qeel-binaries.yaml -R qeel-ai/sandbox-agent --ref qeel -f tag=vX.Y.Z-qeel.N
+```
